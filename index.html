@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reels with Hashtags</title>
-    <style>
+    <title>Reels Caption with Hashtags</title>
+ <style>
         /* Base styles */
         * {
             margin: 0;
@@ -124,9 +124,10 @@
 <body>
 
     <div class="container">
-        <h1>Reels Captions with #Hash</h1>
+        <h1>Reels Captions with #Tags</h1>
         <div id="caption-box">Loading...</div>
         <button id="copy-button" onclick="copyAndNext()">Copy & Next</button>
+        <button id="reset-button" onclick="resetCaptions()">Reset Captions</button>
         <div class="caption-info">
             <span id="total-captions">Total Captions: 0</span> |
             <span id="remaining-captions">Remaining: 0</span>
@@ -160,7 +161,7 @@
             }
         }
 
-        // Function to shuffle captions
+        // Shuffle the captions
         function shuffleCaptions() {
             for (let i = captions.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -168,13 +169,13 @@
             }
         }
 
-        // Function to get random hashtags
+        // Get random hashtags
         function getRandomHashtags() {
             let shuffledHashtags = [...hashtags].sort(() => 0.5 - Math.random());
             return shuffledHashtags.slice(0, 5).join(' ');
         }
 
-        // Function to display caption with hashtags
+        // Show caption with hashtags
         function showCaption() {
             const captionBox = document.getElementById('caption-box');
 
@@ -195,7 +196,7 @@
             updateCaptionInfo();
         }
 
-        // Function to copy the current caption and show the next one
+        // Copy current caption and show next one
         function copyAndNext() {
             const captionBox = document.getElementById('caption-box');
             const currentCaption = captionBox.textContent;
@@ -211,10 +212,19 @@
             showCaption();
         }
 
-        // Function to update the captions info
+        // Update the captions info (total and remaining)
         function updateCaptionInfo() {
             document.getElementById('total-captions').textContent = `Total Captions: ${captions.length + usedCaptions.length}`;
             document.getElementById('remaining-captions').textContent = `Remaining: ${captions.length}`;
+        }
+
+        // Reset the captions
+        function resetCaptions() {
+            usedCaptions = [];
+            localStorage.removeItem('usedCaptions'); // Remove used captions from local storage
+            loadContent(); // Reload captions and reset
+            document.getElementById('copy-button').disabled = false; // Re-enable copy button
+            console.log('Captions reset!');
         }
 
         // Dark mode toggle
