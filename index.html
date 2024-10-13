@@ -3,136 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Caption and Hashtag Generator</title>
+    <title>Caption Generator with Hashtags</title>
     <style>
-        /* Base styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s;
-            position: relative;
-        }
-
-        :root {
-            /* Light mode colors */
-            --background-color: #f0f0f0;
-            --text-color: #333;
-            --primary-color: #007BFF;
-            --box-background-light: rgba(0, 123, 255, 0.1);
-            --button-bg: #007BFF;
-            --button-hover-bg: #0056b3;
-        }
-
-        [data-theme="dark"] {
-            /* Dark mode colors */
-            --background-color: #121212;
-            --text-color: #e0e0e0;
-            --primary-color: #BB86FC;
-            --box-background-dark: #2c2c2c; /* Lighter than dark background */
-            --button-bg: #BB86FC;
-            --button-hover-bg: #8f6fc4;
-        }
-
-        .container {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: var(--background-color);
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        #caption-box {
-            margin-bottom: 20px;
-            padding: 20px;
-            font-size: 20px;
-            border: 2px solid var(--primary-color);
-            border-radius: 5px;
-            background-color: var(--box-background-light);
-            height: 150px;
-            width: 100%;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: background-color 0.3s;
-            white-space: pre-wrap; /* Preserves line breaks */
-        }
-
-        [data-theme="dark"] #caption-box {
-            background-color: var(--box-background-dark);
-        }
-
-        #copy-button {
-            padding: 12px 25px;
-            font-size: 16px;
-            background-color: var(--button-bg);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        #copy-button:hover {
-            background-color: var(--button-hover-bg);
-        }
-
-        .theme-toggle {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background-color: var(--button-bg);
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .theme-toggle:hover {
-            background-color: var(--button-hover-bg);
-        }
-
-        /* Responsive styling */
-        @media (max-width: 600px) {
-            #caption-box {
-                font-size: 16px;
-                width: 100%;
-            }
-            #copy-button {
-                font-size: 14px;
-                padding: 10px 20px;
-            }
-        }
-
-        /* Style for caption info display */
-        .caption-info {
-            margin-top: 10px;
-            font-size: 16px;
-            color: var(--primary-color);
-        }
+        /* Your existing CSS styles */
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Caption and Hashtag Generator</h1>
+        <h1>Caption Generator with Hashtags</h1>
         <div id="caption-box">Loading...</div>
         <button id="copy-button" onclick="copyAndNext()">Copy & Next</button>
         <div class="caption-info">
@@ -146,32 +25,29 @@
         let captions = [];
         let hashtags = [];
         let usedCaptions = JSON.parse(localStorage.getItem('usedCaptions')) || [];
-        let totalCaptionsCount = 0;
 
-        // Function to load captions and hashtags from files
-        async function loadCaptionsAndHashtags() {
+        // Function to load captions and hashtags from text files
+        async function loadContent() {
             try {
-                const captionResponse = await fetch('captions.txt');
-                const hashtagResponse = await fetch('hashtags.txt');
-                const captionText = await captionResponse.text();
-                const hashtagText = await hashtagResponse.text();
+                const captionsResponse = await fetch('captions.txt');
+                const hashtagsResponse = await fetch('hashtags.txt');
+                const captionsText = await captionsResponse.text();
+                const hashtagsText = await hashtagsResponse.text();
 
-                captions = captionText.split('----').map(c => c.trim());
-                hashtags = hashtagText.split('----').map(h => h.trim());
+                captions = captionsText.split('----').map(caption => caption.trim());
+                hashtags = hashtagsText.split('\n').map(tag => tag.trim()).filter(tag => tag !== '');
 
                 captions = captions.filter(caption => !usedCaptions.includes(caption));
-
-                totalCaptionsCount = captions.length + usedCaptions.length;
                 shuffleCaptions();
                 updateCaptionInfo();
                 showCaption();
             } catch (error) {
-                console.error('Error fetching captions or hashtags:', error);
-                document.getElementById('caption-box').textContent = 'Error loading captions!';
+                console.error('Error loading content:', error);
+                document.getElementById('caption-box').textContent = 'Error loading content!';
             }
         }
 
-        // Shuffle function for randomizing captions
+        // Function to shuffle captions
         function shuffleCaptions() {
             for (let i = captions.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -179,33 +55,34 @@
             }
         }
 
-        // Update total and remaining caption info
-        function updateCaptionInfo() {
-            document.getElementById('total-captions').textContent = `Total Captions: ${totalCaptionsCount}`;
-            document.getElementById('remaining-captions').textContent = `Remaining: ${captions.length}`;
+        // Function to get random hashtags
+        function getRandomHashtags() {
+            let shuffledHashtags = [...hashtags].sort(() => 0.5 - Math.random());
+            return shuffledHashtags.slice(0, 5).join(' ');
         }
 
-        // Function to display caption with hashtags after newline
+        // Function to display caption with hashtags
         function showCaption() {
             const captionBox = document.getElementById('caption-box');
-            if (captions.length === 0 || hashtags.length === 0) {
-                captionBox.textContent = "No more captions or hashtags!";
+
+            if (captions.length === 0) {
+                captionBox.textContent = "No more captions!";
                 document.getElementById('copy-button').disabled = true;
                 return;
             }
 
             const nextCaption = captions.splice(Math.floor(Math.random() * captions.length), 1)[0];
-            const nextHashtags = hashtags.splice(Math.floor(Math.random() * hashtags.length), 1)[0];
+            const hashtagsSet = getRandomHashtags();
+            const captionWithHashtags = `${nextCaption}\n${hashtagsSet}`;
 
-            const fullCaption = `${nextCaption}\n${nextHashtags}`;
             usedCaptions.push(nextCaption);
             localStorage.setItem('usedCaptions', JSON.stringify(usedCaptions));
 
-            captionBox.textContent = fullCaption;
+            captionBox.textContent = captionWithHashtags;
             updateCaptionInfo();
         }
 
-        // Copy the caption to clipboard and load next one
+        // Function to copy the current caption and show the next one
         function copyAndNext() {
             const captionBox = document.getElementById('caption-box');
             const currentCaption = captionBox.textContent;
@@ -215,10 +92,16 @@
                     console.log('Copied to clipboard:', currentCaption);
                 })
                 .catch(err => {
-                    console.error('Failed to copy:', err);
+                    console.error('Could not copy text:', err);
                 });
 
             showCaption();
+        }
+
+        // Function to update the captions info
+        function updateCaptionInfo() {
+            document.getElementById('total-captions').textContent = `Total Captions: ${captions.length + usedCaptions.length}`;
+            document.getElementById('remaining-captions').textContent = `Remaining: ${captions.length}`;
         }
 
         // Dark mode toggle
@@ -231,8 +114,8 @@
             }
         }
 
-        // Load captions and hashtags when the page loads
-        window.onload = loadCaptionsAndHashtags;
+        // Load captions and hashtags on page load
+        window.onload = loadContent;
     </script>
 
 </body>
