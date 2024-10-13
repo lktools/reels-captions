@@ -5,7 +5,128 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Caption Generator with Hashtags</title>
     <style>
-        /* Your existing CSS styles */
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            position: relative;
+        }
+
+        :root {
+            /* Light mode colors */
+            --background-color: #f0f0f0;
+            --text-color: #333;
+            --primary-color: #007BFF;
+            --box-background-light: rgba(0, 123, 255, 0.1);
+            --button-bg: #007BFF;
+            --button-hover-bg: #0056b3;
+        }
+
+        [data-theme="dark"] {
+            /* Dark mode colors */
+            --background-color: #121212;
+            --text-color: #e0e0e0;
+            --primary-color: #BB86FC;
+            --box-background-dark: #2c2c2c; /* Lighter than dark background */
+            --button-bg: #BB86FC;
+            --button-hover-bg: #8f6fc4;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #caption-box {
+            margin-bottom: 20px;
+            padding: 20px;
+            font-size: 20px;
+            border: 2px solid var(--primary-color);
+            border-radius: 5px;
+            background-color: var(--box-background-light);
+            height: 150px;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: background-color 0.3s;
+            white-space: pre-wrap; /* Preserves line breaks */
+        }
+
+        [data-theme="dark"] #caption-box {
+            background-color: var(--box-background-dark);
+        }
+
+        #copy-button {
+            padding: 12px 25px;
+            font-size: 16px;
+            background-color: var(--button-bg);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #copy-button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background-color: var(--button-bg);
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        /* Responsive styling */
+        @media (max-width: 600px) {
+            #caption-box {
+                font-size: 16px;
+                width: 100%;
+            }
+            #copy-button {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+
+        /* Style for caption info display */
+        .caption-info {
+            margin-top: 10px;
+            font-size: 16px;
+            color: var(--primary-color);
+        }
     </style>
 </head>
 <body>
